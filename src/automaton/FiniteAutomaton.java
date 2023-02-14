@@ -4,14 +4,14 @@ import java.util.*;
 public class FiniteAutomaton {
     private Set<String> states;
     private Set<Character> alphabet;
-    private Map<String, Map<Character, String>> transitions;
+    private Transition[] transitions;
     private String startState;
     private Set<String> acceptStates;
 
-    public FiniteAutomaton() {
+    public FiniteAutomaton(Transition[] transitions) {
         this.states = new HashSet<>();
         this.alphabet = new HashSet<>();
-        this.transitions = new HashMap<>();
+        this.transitions = transitions;
         this.startState = null;
         this.acceptStates = new HashSet<>();
     }
@@ -32,14 +32,6 @@ public class FiniteAutomaton {
         this.alphabet = alphabet;
     }
 
-    public Map<String, Map<Character, String>> getTransitions() {
-        return transitions;
-    }
-
-    public void setTransitions(Map<String, Map<Character, String>> transitions) {
-        this.transitions = transitions;
-    }
-
     public String getStartState() {
         return startState;
     }
@@ -56,21 +48,26 @@ public class FiniteAutomaton {
         this.acceptStates = acceptStates;
     }
 
-    public boolean wordIsValid(String word) {
-        String currentState = startState;
-        for (int i = 0; i < word.length(); i++) {
-            char currentChar = word.charAt(i);
-            if (!alphabet.contains(currentChar)) {
-                return false;
-            }
-            Map<Character, String> stateTransitions = transitions.get(currentState);
-            if (stateTransitions == null || !stateTransitions.containsKey(currentChar)) {
-                return false;
-            }
-            currentState = stateTransitions.get(currentChar);
-        }
-        return acceptStates.contains(currentState);
+    public String getTransitions() {
+        return "Transitions = " + Arrays.toString(transitions);
     }
 
-
+    public boolean wordIsValid(String word) {
+        char currentState = startState.charAt(0);
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            boolean foundTransition = false;
+            for (Transition t : transitions) {
+                if (t.getCurrentState() == currentState && t.getTransitionLabel() == c) {
+                    currentState = t.getNextState();
+                    foundTransition = true;
+                    break;
+                }
+            }
+            if (!foundTransition) {
+                return false;
+            }
+        }
+        return acceptStates.contains(Character.toString(currentState));
+    }
 }

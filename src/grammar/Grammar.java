@@ -1,8 +1,7 @@
 package grammar;
+
 import automaton.FiniteAutomaton;
-
-import java.util.*;
-
+import automaton.Transition;
 import java.util.*;
 
 public class Grammar {
@@ -36,32 +35,39 @@ public class Grammar {
     }
 
     public FiniteAutomaton toFiniteAutomaton() {
-        FiniteAutomaton automaton = new FiniteAutomaton();
+
         Set<String> states = new HashSet<>();
-        Map<String, Map<Character, String>> transitions = new HashMap<>();
+        Set<String> finalStates = new HashSet<>(Set.of("X"));
+        int dimension = 0;
+        int dimCheck = 0;
 
         for (char nonTerminal : nonTerminals) {
-            for (String rightHandSide : productionRules.get(nonTerminal)) {
-                String state = nonTerminal + "->" + rightHandSide;
-                states.add(state);
-                transitions.put(state, new HashMap<>());
-                for (int i = 0; i < rightHandSide.length(); i++) {
-                    char symbol = rightHandSide.charAt(i);
-                    String nextState = nonTerminal + "->" + rightHandSide.substring(i + 1);
-                    if (terminals.contains(symbol)) {
-                        transitions.get(state).put(symbol, nextState);
-                    } else {
-                        String nextStateStart = symbol + "->" + productionRules.get(symbol).get(0);
-                        transitions.get(state).put(symbol, nextStateStart);
-                    }
+            dimension += productionRules.get(nonTerminal).size();
+        }
+
+        Transition[] transition = new Transition[dimension];
+
+        for (char nonTerminal : nonTerminals) {
+            states.add(Character.toString(nonTerminal));
+            List<String> rightHandSides = productionRules.get(nonTerminal);
+            for ( String str: rightHandSides){
+                char nextState;
+                if (str.length() > 1){
+                    nextState = str.charAt(1);
+                } else {
+                    nextState = 'X';
                 }
+                char transitionLabel = str.charAt(0);
+                transition[dimCheck] = new Transition(nonTerminal, nextState, transitionLabel);
+                dimCheck++;
             }
         }
 
+        FiniteAutomaton automaton = new FiniteAutomaton(transition);
+        states.add("X");
         automaton.setStates(states);
-        automaton.setTransitions(transitions);
-        automaton.setStartState(startSymbol + "->" + productionRules.get(startSymbol).get(0));
-        automaton.setAcceptStates(states);
+        automaton.setStartState(Character.toString(startSymbol));
+        automaton.setAcceptStates(finalStates);
         automaton.setAlphabet(terminals);
 
         return automaton;
