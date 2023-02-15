@@ -50,7 +50,7 @@ public class Main {
         System.out.println("dabcd" + " - " + f1.wordIsValid("dabcd") );
         System.out.println("001" + " - " + f1.wordIsValid("001") );
         System.out.println(word1 + " - " + f1.wordIsValid(word1) );
-        System.out.println("001" + " - " + f1.wordIsValid("001") );
+        System.out.println("dabcabcd" + " - " + f1.wordIsValid("dabcabcd") );
         System.out.println(word2 + " - " + f1.wordIsValid(word2) );
     }
 }
