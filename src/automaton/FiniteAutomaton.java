@@ -1,4 +1,5 @@
 package automaton;
+import grammar.Grammar;
 import java.util.*;
 
 public class FiniteAutomaton {
@@ -53,12 +54,12 @@ public class FiniteAutomaton {
     }
 
     public boolean wordIsValid(String word) {
-        char currentState = startState.charAt(0);
+        String currentState = startState;
         for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
             boolean foundTransition = false;
             for (Transition t : transitions) {
-                if (t.getCurrentState() == currentState && t.getTransitionLabel() == c) {
+                if (Objects.equals(t.getCurrentState(), currentState) && t.getTransitionLabel() == c) {
                     currentState = t.getNextState();
                     foundTransition = true;
                     break;
@@ -68,6 +69,8 @@ public class FiniteAutomaton {
                 return false;
             }
         }
-        return acceptStates.contains(Character.toString(currentState));
+        return acceptStates.contains(currentState);
     }
+
+
 }

@@ -1,4 +1,5 @@
 import automaton.FiniteAutomaton;
+import automaton.Transition;
 import grammar.Grammar;
 
 import java.util.*;
@@ -7,13 +8,13 @@ public class Main {
     public static void main(String[] args) {
 
         char startingCharacter = 'S';
-        Set<Character> nonTerminals = new HashSet<>(Set.of('S', 'A', 'B', 'C'));
+        Set<String> nonTerminals = new HashSet<>(Set.of("S", "A", "B", "C"));
         Set<Character> terminals = new HashSet<>(Set.of('a', 'b', 'c', 'd'));
-        Map<Character, List<String>> productionRules = new HashMap<>() {{
-            put('S', new ArrayList<>(List.of("dA")));
-            put('A', new ArrayList<>(List.of("d","aB")));
-            put('B', new ArrayList<>(List.of("bC")));
-            put('C', new ArrayList<>(List.of("cA","aS")));
+        Map<String, List<String>> productionRules = new HashMap<>() {{
+            put("S", new ArrayList<>(List.of("dA")));
+            put("A", new ArrayList<>(List.of("d","aB")));
+            put("B", new ArrayList<>(List.of("bC")));
+            put("C", new ArrayList<>(List.of("cA","aS")));
         }};
         System.out.println("\n1. Grammar\n");
         System.out.println("Non-terminal symbols = " + nonTerminals);
@@ -22,7 +23,8 @@ public class Main {
         System.out.println("Production rules = " + productionRules);
 
         Grammar g1 = new Grammar(startingCharacter, terminals, nonTerminals, productionRules);
-
+        String type = g1.getGrammarType();
+        System.out.println(type);
         System.out.println("\n2. Generated words: \n");
         for (int i = 0; i<5; i++) {
             String word = g1.generateWord();
@@ -52,5 +54,43 @@ public class Main {
         System.out.println(word1 + " - " + f1.wordIsValid(word1) );
         System.out.println("dabcabcd" + " - " + f1.wordIsValid("dabcabcd") );
         System.out.println(word2 + " - " + f1.wordIsValid(word2) );
+
+
+        // Finite Automaton
+
+        /*
+
+        Variant 19
+        Q = {q0,q1,q2},
+        ∑ = {a,b},
+        F = {q2},
+        δ(q0,a) = q1,
+        δ(q0,a) = q0,
+        δ(q1,b) = q2,
+        δ(q0,b) = q0,
+        δ(q1,b) = q1,
+        δ(q2,b) = q2.
+
+        */
+
+        Set<String> states = new HashSet<>(Set.of("q0", "q1", "q2"));
+        Set<Character> alphabet = new HashSet<>(Set.of('a', 'b'));
+        String startState = "q0";
+        Set<String> acceptStates = new HashSet<>(Set.of("q2"));
+        Transition[] transitions = new Transition[6];
+        transitions[0] = new Transition("q0", "q1",'a');
+        transitions[1] = new Transition("q0", "q0",'a');
+        transitions[2] = new Transition("q1", "q2",'b');
+        transitions[3] = new Transition("q0", "q0",'b');
+        transitions[4] = new Transition("q1", "q1",'b');
+        transitions[5] = new Transition("q2", "q2",'b');
+        FiniteAutomaton f2 = new FiniteAutomaton(transitions);
+        f2.setStartState(startState);
+        f2.setAlphabet(alphabet);
+        f2.setAcceptStates(acceptStates);
+        f2.setStates(states);
+        productionRules.get("S").add("L");
+        System.out.println(productionRules);
+
     }
 }

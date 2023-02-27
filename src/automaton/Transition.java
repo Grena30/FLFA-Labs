@@ -3,19 +3,19 @@ package automaton;
 
 public class Transition {
 
-    private char currentState;
-    private char nextState;
+    private String currentState;
+    private String nextState;
     private char transitionLabel;
 
-    public Transition(char currentState, char nextState, char transitionLabel) {
+    public Transition(String currentState, String nextState, char transitionLabel) {
         this.currentState = currentState;
         this.nextState = nextState;
         this.transitionLabel = transitionLabel;
     }
-    public char getCurrentState() {
+    public String getCurrentState() {
         return this.currentState;
     }
-    public char getNextState() {
+    public String getNextState() {
         return this.nextState;
     }
     public char getTransitionLabel() {
@@ -24,6 +24,6 @@ public class Transition {
 
     @Override
     public String toString() {
-        return Character.toString(this.nextState);
+        return this.nextState;
     }
 }
