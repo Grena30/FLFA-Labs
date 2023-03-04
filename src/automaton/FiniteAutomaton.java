@@ -1,6 +1,7 @@
 package automaton;
 import grammar.Grammar;
 import java.util.*;
+import java.util.Arrays;
 
 public class FiniteAutomaton {
     private Set<String> states;
@@ -144,105 +145,107 @@ public class FiniteAutomaton {
         return true;
     }
 
-
     public FiniteAutomaton convertToDFA() {
-        // Create a new DFA with the same alphabet
+        // Create the new DFA
         FiniteAutomaton dfa = new FiniteAutomaton(new Transition[0]);
-        dfa.setAlphabet(this.alphabet);
 
-        // Compute epsilon-closure of the start state
-        Set<String> startClosure = epsilonClosure(Collections.singleton(startState));
+        // Create a mapping of states to their epsilon closures
+        Map<Set<String>, Set<String>> epsilonClosures = new HashMap<>();
+        for (String state : states) {
+            Set<String> closure = getEpsilonClosure(state);
+            epsilonClosures.put(closure, closure);
+        }
 
-        // Initialize the worklist with the start closure
-        Queue<Set<String>> worklist = new LinkedList<>();
-        worklist.add(startClosure);
+        // Initialize the DFA with the start state
+        Set<String> startClosure = epsilonClosures.get(getEpsilonClosure(this.startState));
+        dfa.states.add(setToString(startClosure));
+        dfa.startState = setToString(startClosure);
+        dfa.alphabet = this.alphabet;
 
-        // Keep track of visited states in the DFA
-        Map<Set<String>, String> stateMap = new HashMap<>();
+        // Compute the transitions for the DFA
+        Set<Set<String>> unmarkedStates = new HashSet<>();
+        unmarkedStates.add(startClosure);
+        while (!unmarkedStates.isEmpty()) {
+            Set<String> currentStateSet = unmarkedStates.iterator().next();
+            unmarkedStates.remove(currentStateSet);
 
-        // While there are unprocessed sets of states in the worklist
-        while (!worklist.isEmpty()) {
-            Set<String> currentStateSet = worklist.poll();
-
-            // If the set of states has already been added to the DFA, skip it
-            if (stateMap.containsKey(currentStateSet)) {
-                continue;
-            }
-
-            // Add the current set of states as a new state in the DFA
-            String currentState = String.join(",", currentStateSet);
-            stateMap.put(currentStateSet, currentState);
-            dfa.getStates().add(currentState);
-
-            // Check if the current set of states contains an accept state
-            for (String acceptState : acceptStates) {
-                if (currentStateSet.contains(acceptState)) {
-                    dfa.getAcceptStates().add(currentState);
-                    break;
-                }
-            }
-
-            // For each symbol in the alphabet
-            for (String symbol : alphabet) {
+            for (String label : this.alphabet) {
                 Set<String> nextStateSet = new HashSet<>();
-
-                // Compute the set of states reachable from the current set of states
-                // by following transitions labeled with the current symbol
                 for (String state : currentStateSet) {
-                    for (Transition transition : transitions) {
-                        if (transition.getCurrentState().equals(state) && Objects.equals(transition.getTransitionLabel(), symbol)) {
-                            nextStateSet.add(transition.getNextState());
+                    for (Transition t : this.transitions) {
+                        if (t.getCurrentState().equals(state) && t.getTransitionLabel().equals(label)) {
+                            Set<String> targetClosure = epsilonClosures.get(getEpsilonClosure(t.getNextState()));
+                            nextStateSet.addAll(targetClosure);
                         }
                     }
                 }
 
-                // Compute the epsilon-closure of the next set of states
-                nextStateSet = epsilonClosure(nextStateSet);
-
-                // If the next set of states is not empty, add a transition to the DFA
                 if (!nextStateSet.isEmpty()) {
-                    String nextState = stateMap.get(nextStateSet);
-                    if (nextState == null) {
-                        nextState = String.join(",", nextStateSet);
-                        stateMap.put(nextStateSet, nextState);
-                        worklist.add(nextStateSet);
-                        dfa.getStates().add(nextState);
+                    String nextStateName = setToString(nextStateSet);
+                    dfa.states.add(nextStateName);
+
+                    if (dfa.startState == null && nextStateSet.contains(this.startState)) {
+                        dfa.startState = nextStateName;
                     }
-                    dfa.addTransition(new Transition(currentState, nextState, symbol));
+
+                    if (isAcceptState(nextStateSet)) {
+                        dfa.acceptStates.add(nextStateName);
+                    }
+
+                    String currentStateName = setToString(currentStateSet);
+                    dfa.transitions = Arrays.copyOf(dfa.transitions, dfa.transitions.length + 1);
+                    dfa.transitions[dfa.transitions.length - 1] = new Transition(currentStateName, nextStateName, label);
+
+                    if (!epsilonClosures.containsKey(nextStateSet)) {
+                        epsilonClosures.put(nextStateSet, nextStateSet);
+                        unmarkedStates.add(nextStateSet);
+                    }
                 }
             }
         }
-
-        // Set the start state of the DFA to the epsilon-closure of the original start state
-        dfa.setStartState(stateMap.get(startClosure));
 
         return dfa;
     }
 
-    private Set<String> epsilonClosure(Set<String> states) {
-        Set<String> closure = new HashSet<>(states);
-        Queue<String> worklist = new LinkedList<>(states);
-
-        // While there are unprocessed states in the worklist
-        while (!worklist.isEmpty()) {
-            String currentState = worklist.poll();
-
-            // For each epsilon transition from the current state
-            for (Transition transition : transitions) {
-                if (transition.getCurrentState().equals(currentState) && Objects.equals(transition.getTransitionLabel(), "ε")) {
-                    String nextState = transition.getNextState();
-                    if (!closure.contains(nextState)) {
-                        closure.add(nextState);
-                        worklist.add(nextState);
+    private Set<String> getEpsilonClosure(String state) {
+        Set<String> closure = new HashSet<>();
+        closure.add(state);
+        boolean changed;
+        do {
+            changed = false;
+            for (Transition t : transitions) {
+                if (t.getCurrentState().equals(state) && t.getTransitionLabel().equals("")) {
+                    if (closure.add(t.getNextState())) {
+                        changed = true;
                     }
                 }
             }
-        }
-
+        } while (changed);
         return closure;
     }
 
+    private boolean isAcceptState(Set<String> stateSet) {
+        for (String state : stateSet) {
+            if (acceptStates.contains(state)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private String setToString(Set<String> set) {
+        StringBuilder sb = new StringBuilder("{");
+        boolean first = true;
+        for (String element : set) {
+            if (!first) {
+                sb.append(",");
+            }
+            sb.append(element);
+            first = false;
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 
 
 }

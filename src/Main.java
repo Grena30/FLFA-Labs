@@ -7,6 +7,10 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
+        /*
+
+        Laboratory work 1
+
         String startingCharacter = "S";
         Set<String> nonTerminals = new HashSet<>(Set.of("S", "A", "B", "C"));
         Set<String> terminals = new HashSet<>(Set.of("a", "b", "c", "d"));
@@ -32,7 +36,7 @@ public class Main {
             System.out.println(word);
         }
 
-        /*
+
 
         FiniteAutomaton f1 = g1.toFiniteAutomaton();
         System.out.println("\n3. Finite automaton\n");
@@ -43,6 +47,9 @@ public class Main {
         System.out.println(f1.printTransitions());
 
         */
+
+
+        //Laboratory work 2
 
         // Finite Automaton
 
@@ -78,25 +85,38 @@ public class Main {
         f2.setAcceptStates(acceptStates);
         f2.setStates(states);
 
-
+        System.out.println("\nNon-deterministic finite automaton\n");
+        System.out.println("Alphabet = " + f2.getAlphabet());
+        System.out.println("States = " + f2.getStates());
+        System.out.println("Initial state = " + f2.getStartState());
+        System.out.println("Accepting states = " + f2.getAcceptStates());
+        System.out.println(f2.printTransitions());
+        System.out.println("Is the current final automaton deterministic: " + f2.isDeterministic());
+        System.out.println("\nFinite automaton to grammar ");
         Grammar g2 = f2.toGrammar();
         String symbol = g2.getStartSymbol();
         Set<String> nonTerminal = g2.getNonTerminals();
         Set<String> terminal = g2.getTerminals();
         Map<String, List<String>> productionRule = g2.getProductionRules();
-        System.out.println(symbol);
-        System.out.println(nonTerminal);
-        System.out.println(terminal);
-        System.out.println(productionRule);
-        System.out.println(f2.isDeterministic());
+        System.out.println("\nGrammar\n");
+        System.out.println("Staring symbol = " + symbol);
+        System.out.println("Non-terminal symbols = " + nonTerminal);
+        System.out.println("Terminal symbols = " + terminal);
+        System.out.println("Production rules = " + productionRule);
+        System.out.println("\nGenerate words: \n");
+        for (int i = 0; i<5; i++) {
+            System.out.println(g2.generateWord());
+        }
+
+        System.out.println("\nNDFA to DFA ");
         FiniteAutomaton dfa2 = f2.convertToDFA();
-        System.out.println(dfa2.isDeterministic());
-        System.out.println("\n Deterministic Finite automaton\n");
+        System.out.println("\nDeterministic Finite automaton\n");
         System.out.println("Alphabet = " + dfa2.getAlphabet());
         System.out.println("States = " + dfa2.getStates());
         System.out.println("Initial state = " + dfa2.getStartState());
         System.out.println("Accepting states = " + dfa2.getAcceptStates());
         System.out.println(dfa2.printTransitions());
+        System.out.println("Is the current final automaton deterministic: " + dfa2.isDeterministic());
 
     }
 }

@@ -44,7 +44,15 @@ public class Grammar {
         String randomRightHandSide = rightHandSides.get(new Random().nextInt(rightHandSides.size()));
         StringBuilder word = new StringBuilder();
         for (char rightSymbol : randomRightHandSide.toCharArray()) {
-            word.append(generateWord(Character.toString(rightSymbol)));
+            if (this.terminals.contains(Character.toString(rightSymbol))) {
+                word.append(generateWord(Character.toString(rightSymbol)));
+            } else if (rightSymbol == 'q'){
+                word.append(generateWord(Character.toString(rightSymbol)+ randomRightHandSide.charAt(randomRightHandSide.length() - 1)));
+            } else if (!this.nonTerminals.contains(Character.toString(rightSymbol))) {
+                continue;
+            } else {
+                word.append(generateWord(Character.toString(rightSymbol)));
+            }
         }
         return word.toString();
     }
@@ -66,14 +74,18 @@ public class Grammar {
             states.add(nonTerminal);
             List<String> rightHandSides = productionRules.get(nonTerminal);
             for ( String str: rightHandSides){
-                char nextState;
+                String nextState = "";
                 if (str.length() > 1){
-                    nextState = str.charAt(1);
+                    if (str.charAt(1) == 'q'){
+                        nextState = "q" + str.charAt(2);
+                    } else {
+                        nextState = Character.toString(str.charAt(1));
+                    }
                 } else {
-                    nextState = 'X';
+                    nextState = "X";
                 }
                 char transitionLabel = str.charAt(0);
-                transition[dimCheck] = new Transition(nonTerminal, Character.toString(nextState), Character.toString(transitionLabel));
+                transition[dimCheck] = new Transition(nonTerminal, nextState, Character.toString(transitionLabel));
                 dimCheck++;
             }
         }
@@ -88,7 +100,7 @@ public class Grammar {
         return automaton;
     }
 
-public String getGrammarType() {
+    public String getGrammarType() {
         if (isRegularGrammar()) {
             return "Regular (Type 3)";
         } else if (isContextFreeGrammar()) {
