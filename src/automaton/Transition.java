@@ -5,9 +5,9 @@ public class Transition {
 
     private String currentState;
     private String nextState;
-    private char transitionLabel;
+    private String transitionLabel;
 
-    public Transition(String currentState, String nextState, char transitionLabel) {
+    public Transition(String currentState, String nextState, String transitionLabel) {
         this.currentState = currentState;
         this.nextState = nextState;
         this.transitionLabel = transitionLabel;
@@ -18,7 +18,7 @@ public class Transition {
     public String getNextState() {
         return this.nextState;
     }
-    public char getTransitionLabel() {
+    public String getTransitionLabel() {
         return this.transitionLabel;
     }
 

@@ -7,9 +7,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        char startingCharacter = 'S';
+        String startingCharacter = "S";
         Set<String> nonTerminals = new HashSet<>(Set.of("S", "A", "B", "C"));
-        Set<Character> terminals = new HashSet<>(Set.of('a', 'b', 'c', 'd'));
+        Set<String> terminals = new HashSet<>(Set.of("a", "b", "c", "d"));
         Map<String, List<String>> productionRules = new HashMap<>() {{
             put("S", new ArrayList<>(List.of("dA")));
             put("A", new ArrayList<>(List.of("d","aB")));
@@ -74,23 +74,32 @@ public class Main {
         */
 
         Set<String> states = new HashSet<>(Set.of("q0", "q1", "q2"));
-        Set<Character> alphabet = new HashSet<>(Set.of('a', 'b'));
+        Set<String> alphabet = new HashSet<>(Set.of("a", "b"));
         String startState = "q0";
         Set<String> acceptStates = new HashSet<>(Set.of("q2"));
         Transition[] transitions = new Transition[6];
-        transitions[0] = new Transition("q0", "q1",'a');
-        transitions[1] = new Transition("q0", "q0",'a');
-        transitions[2] = new Transition("q1", "q2",'b');
-        transitions[3] = new Transition("q0", "q0",'b');
-        transitions[4] = new Transition("q1", "q1",'b');
-        transitions[5] = new Transition("q2", "q2",'b');
+        transitions[0] = new Transition("q0", "q1","a");
+        transitions[1] = new Transition("q0", "q0","a");
+        transitions[2] = new Transition("q1", "q2","b");
+        transitions[3] = new Transition("q0", "q0","b");
+        transitions[4] = new Transition("q1", "q1","b");
+        transitions[5] = new Transition("q2", "q2","b");
         FiniteAutomaton f2 = new FiniteAutomaton(transitions);
         f2.setStartState(startState);
         f2.setAlphabet(alphabet);
         f2.setAcceptStates(acceptStates);
         f2.setStates(states);
-        productionRules.get("S").add("L");
-        System.out.println(productionRules);
 
+
+        Grammar g2 = f2.toGrammar();
+        String symbol = g2.getStartSymbol();
+        Set<String> nonTerminal = g2.getNonTerminals();
+        Set<String> terminal = g2.getTerminals();
+        Map<String, List<String>> productionRule = g2.getProductionRules();
+        System.out.println(symbol);
+        System.out.println(nonTerminal);
+        System.out.println(terminal);
+        System.out.println(productionRule);
+        System.out.println(f2.isDeterministic());
     }
 }

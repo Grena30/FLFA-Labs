@@ -5,31 +5,51 @@ import automaton.Transition;
 import java.util.*;
 
 public class Grammar {
-    private char startSymbol;
-    private Set<Character> terminals;
+    private String startSymbol;
+    private Set<String> terminals;
     private Set<String> nonTerminals;
     private Map<String, List<String>> productionRules;
 
-    public Grammar(char startSymbol, Set<Character> terminals, Set<String> nonTerminals, Map<String, List<String>> productionRules) {
+    public Grammar(String startSymbol, Set<String> terminals, Set<String> nonTerminals, Map<String, List<String>> productionRules) {
         this.startSymbol = startSymbol;
         this.terminals = terminals;
         this.nonTerminals = nonTerminals;
         this.productionRules = productionRules;
+    }
+    public Map<String, List<String>> getProductionRules(){
+        return productionRules;
+    }
+
+    public Set<String> getNonTerminals(){
+        return nonTerminals;
+    }
+
+    public Set<String> getTerminals(){
+        return terminals;
+    }
+
+    public String getStartSymbol(){
+        return startSymbol;
     }
 
     public String generateWord() {
         return generateWord(startSymbol);
     }
 
-    private String generateWord(char symbol) {
+    private String generateWord(String symbol) {
         if (terminals.contains(symbol)) {
-            return Character.toString(symbol);
+            return symbol;
         }
-        List<String> rightHandSides = productionRules.get(Character.toString(symbol));
+        List<String> rightHandSides = productionRules.get(symbol);
         String randomRightHandSide = rightHandSides.get(new Random().nextInt(rightHandSides.size()));
         StringBuilder word = new StringBuilder();
+        StringBuilder rightSymbol_String = null;
         for (char rightSymbol : randomRightHandSide.toCharArray()) {
-            word.append(generateWord(rightSymbol));
+            if (rightSymbol == 'q') {
+                rightSymbol_String.append(rightSymbol);
+            } else {
+                word.append(generateWord(Character.toString(rightSymbol)));
+            }
         }
         return word.toString();
     }
@@ -58,7 +78,7 @@ public class Grammar {
                     nextState = 'X';
                 }
                 char transitionLabel = str.charAt(0);
-                transition[dimCheck] = new Transition(nonTerminal, Character.toString(nextState), transitionLabel);
+                transition[dimCheck] = new Transition(nonTerminal, Character.toString(nextState), Character.toString(transitionLabel));
                 dimCheck++;
             }
         }
@@ -66,7 +86,7 @@ public class Grammar {
         FiniteAutomaton automaton = new FiniteAutomaton(transition);
         states.add("X");
         automaton.setStates(states);
-        automaton.setStartState(Character.toString(startSymbol));
+        automaton.setStartState(startSymbol);
         automaton.setAcceptStates(finalStates);
         automaton.setAlphabet(terminals);
 
@@ -89,12 +109,14 @@ public String getGrammarType() {
         for (String nonTerminal: nonTerminals) {
             List<String> rightHandSides = productionRules.get(nonTerminal);
             for (String rightSide: rightHandSides ) {
-                if (rightSide.length() == 1 && terminals.contains(rightSide.charAt(0))) {
+                if (rightSide.length() == 1 && Character.isLowerCase(rightSide.charAt(0))) {
                     continue;
                 } else if (rightSide.length() == 2) {
-                    if (nonTerminals.contains(rightSide.charAt(0)) && terminals.contains(rightSide.charAt(1))){
+                    char firstSymbol = rightSide.charAt(0);
+                    char secondSymbol = rightSide.charAt(1);
+                    if (Character.isUpperCase(firstSymbol) && Character.isLowerCase(secondSymbol)){
                         continue;
-                } else if (terminals.contains(rightSide.charAt(1)) && nonTerminals.contains(rightSide.charAt(0))){
+                } else if (Character.isLowerCase(firstSymbol) && Character.isUpperCase(secondSymbol)){
                         continue;
                     }
                 }
@@ -108,9 +130,12 @@ public String getGrammarType() {
         for (String nonTerminal: nonTerminals) {
             List<String> rightHandSides = productionRules.get(nonTerminal);
             for (String rightSide: rightHandSides ) {
-                for (int i = 0; i < rightSide.length(); i++){
+                if (nonTerminal.length() != 1 || !Character.isUpperCase(nonTerminal.charAt(0))) {
+                    return false;
+                }
+                for (int i = 0; i<rightSide.length(); i++){
                     char symbol = rightSide.charAt(i);
-                    if (!nonTerminals.contains(symbol) && !terminals.contains(symbol)){
+                    if (!Character.isUpperCase(symbol) && !Character.isLowerCase(symbol)){
                         return false;
                     }
                 }
@@ -123,7 +148,7 @@ public String getGrammarType() {
         for (String nonTerminal: nonTerminals) {
             List<String> rightHandSides = productionRules.get(nonTerminal);
             for (String rightSide: rightHandSides ) {
-                if (rightSide.length() > 1){
+                if (nonTerminal.length() > rightSide.length()){
                     return false;
                 }
             }
