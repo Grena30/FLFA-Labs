@@ -3,6 +3,7 @@
 
 ## Course: Formal Languages & Finite Automata
 ## Author: Gutu Dinu
+## Variant: 20
 
 ---
 

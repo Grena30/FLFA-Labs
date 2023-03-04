@@ -123,7 +123,7 @@ public class Grammar {
                     char secondSymbol = rightSide.charAt(1);
                     if (Character.isUpperCase(firstSymbol) && Character.isLowerCase(secondSymbol)){
                         continue;
-                } else if (Character.isLowerCase(firstSymbol) && Character.isUpperCase(secondSymbol)){
+                    } else if (Character.isLowerCase(firstSymbol) && Character.isUpperCase(secondSymbol)){
                         continue;
                     }
                 }

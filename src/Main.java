@@ -7,9 +7,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        /*
 
-        Laboratory work 1
+
+        //Laboratory work 1
 
         String startingCharacter = "S";
         Set<String> nonTerminals = new HashSet<>(Set.of("S", "A", "B", "C"));
@@ -20,8 +20,8 @@ public class Main {
             put("B", new ArrayList<>(List.of("bC")));
             put("C", new ArrayList<>(List.of("cA","aS")));
         }};
-
-        System.out.println("\n1. Grammar\n");
+        System.out.println("\nLab 1\n");
+        System.out.println("\nGrammar\n");
         System.out.println("Non-terminal symbols = " + nonTerminals);
         System.out.println("Terminal symbols = " + terminals);
         System.out.println("Starting character = " + startingCharacter);
@@ -30,6 +30,8 @@ public class Main {
         Grammar g1 = new Grammar(startingCharacter, terminals, nonTerminals, productionRules);
         String type = g1.getGrammarType();
         System.out.println(type);
+
+        /*
         System.out.println("\n2. Generated words: \n");
         for (int i = 0; i<5; i++) {
             String word = g1.generateWord();
@@ -47,6 +49,7 @@ public class Main {
         System.out.println(f1.printTransitions());
 
         */
+
 
 
         //Laboratory work 2
@@ -84,7 +87,7 @@ public class Main {
         f2.setAlphabet(alphabet);
         f2.setAcceptStates(acceptStates);
         f2.setStates(states);
-
+        System.out.println("\nLab 2\n");
         System.out.println("\nNon-deterministic finite automaton\n");
         System.out.println("Alphabet = " + f2.getAlphabet());
         System.out.println("States = " + f2.getStates());
@@ -108,7 +111,7 @@ public class Main {
             System.out.println(g2.generateWord());
         }
 
-        System.out.println("\nNDFA to DFA ");
+        System.out.println("\nNFA to DFA ");
         FiniteAutomaton dfa2 = f2.convertToDFA();
         System.out.println("\nDeterministic Finite automaton\n");
         System.out.println("Alphabet = " + dfa2.getAlphabet());

@@ -146,17 +146,15 @@ public class FiniteAutomaton {
     }
 
     public FiniteAutomaton convertToDFA() {
-        // Create the new DFA
+
         FiniteAutomaton dfa = new FiniteAutomaton(new Transition[0]);
 
-        // Create a mapping of states to their epsilon closures
         Map<Set<String>, Set<String>> epsilonClosures = new HashMap<>();
         for (String state : states) {
             Set<String> closure = getEpsilonClosure(state);
             epsilonClosures.put(closure, closure);
         }
 
-        // Initialize the DFA with the start state
         Set<String> startClosure = epsilonClosures.get(getEpsilonClosure(this.startState));
         dfa.states.add(setToString(startClosure));
         dfa.startState = setToString(startClosure);
@@ -210,17 +208,17 @@ public class FiniteAutomaton {
     private Set<String> getEpsilonClosure(String state) {
         Set<String> closure = new HashSet<>();
         closure.add(state);
-        boolean changed;
-        do {
-            changed = false;
-            for (Transition t : transitions) {
-                if (t.getCurrentState().equals(state) && t.getTransitionLabel().equals("")) {
-                    if (closure.add(t.getNextState())) {
-                        changed = true;
-                    }
+        Stack<String> stack = new Stack<>();
+        stack.push(state);
+        while(!stack.empty()) {
+            String currentState = stack.pop();
+            for(Transition t : transitions) {
+                if(t.getCurrentState().equals(currentState) && t.getTransitionLabel().equals("") && !closure.contains(t.getNextState())) {
+                    closure.add(t.getNextState());
+                    stack.push(t.getNextState());
                 }
             }
-        } while (changed);
+        }
         return closure;
     }
 
