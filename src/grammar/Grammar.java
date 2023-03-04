@@ -43,13 +43,8 @@ public class Grammar {
         List<String> rightHandSides = productionRules.get(symbol);
         String randomRightHandSide = rightHandSides.get(new Random().nextInt(rightHandSides.size()));
         StringBuilder word = new StringBuilder();
-        StringBuilder rightSymbol_String = null;
         for (char rightSymbol : randomRightHandSide.toCharArray()) {
-            if (rightSymbol == 'q') {
-                rightSymbol_String.append(rightSymbol);
-            } else {
-                word.append(generateWord(Character.toString(rightSymbol)));
-            }
+            word.append(generateWord(Character.toString(rightSymbol)));
         }
         return word.toString();
     }
