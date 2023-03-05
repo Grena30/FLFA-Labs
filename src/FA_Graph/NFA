@@ -1,0 +1,13 @@
+digraph {
+    q0 [shape=circle]
+    q1 [shape=circle]
+	q2 [shape=doublecircle]
+	q0 -> q1 [label=a]
+	q0 -> q0 [label=a]
+	q1 -> q2 [label=b]
+	q0 -> q0 [label=b]
+	q1 -> q1 [label=b]
+	q2 -> q2 [label=b]
+	"" [label="" shape=none width=0]
+	"" -> q0
+}

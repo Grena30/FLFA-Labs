@@ -24,6 +24,7 @@ public class Transition {
 
     @Override
     public String toString() {
-        return this.nextState;
+        return "{" + this.currentState + ", " + this.transitionLabel + "} " + "-> {" + this.nextState + "}";
+        //return this.nextState
     }
 }
