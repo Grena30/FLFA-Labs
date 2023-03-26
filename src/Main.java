@@ -1,15 +1,21 @@
 import automaton.FiniteAutomaton;
 import automaton.Transition;
 import grammar.Grammar;
+import lexer.Lexer;
+import lexer.Token;
+import lexer.TokenPattern;
 
 import java.util.*;
+import java.util.regex.Matcher;
+
+import static lexer.TokenList.TOKEN_PATTERNS;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
+        /*
 
-
-        //Laboratory work 1
+        //Laboratory work nr.1
 
         String startingCharacter = "S";
         Set<String> nonTerminals = new HashSet<>(Set.of("S", "A", "B", "C"));
@@ -51,8 +57,7 @@ public class Main {
         */
 
 
-
-        //Laboratory work 2
+        // Laboratory work nr.2
 
         // Finite Automaton
 
@@ -69,7 +74,8 @@ public class Main {
         δ(q1,b) = q1,
         δ(q2,b) = q2.
 
-        */
+
+
 
         Set<String> states = new HashSet<>(Set.of("q0", "q1", "q2"));
         Set<String> alphabet = new HashSet<>(Set.of("a", "b"));
@@ -120,6 +126,13 @@ public class Main {
         System.out.println("Accepting states = " + dfa2.getAcceptStates());
         System.out.println(dfa2.printTransitions());
         System.out.println("Is the current final automaton deterministic: " + dfa2.isDeterministic());
+        */
 
+        // Laboratory work nr.3
+
+        String text = "22 + 2";
+        Lexer lexer = new Lexer(text);
+        List<Token> tokens = lexer.lex();
+        System.out.println(tokens);
     }
 }
