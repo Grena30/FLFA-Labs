@@ -9,35 +9,37 @@ import static lexer.TokenList.TOKEN_PATTERNS;
 public class Lexer {
 
     private String text;
-    private int pos;
 
     public Lexer(String text) {
         this.text = text;
-        this.pos = 0;
     }
 
     public List<Token> lex() throws Exception {
-        List<Token> tokens = new ArrayList<>();
+        List<Token> tokens = new ArrayList<Token>();
+        int pos = 0;
         while (pos < text.length()) {
-            boolean matchFound = false;
+            Matcher matcher = null;
             for (TokenPattern pattern : TOKEN_PATTERNS) {
-                Matcher matcher = pattern.getPattern().matcher(text.substring(pos));
-                if (matcher.find()) {
-                    String value = matcher.group();
-                    System.out.println(value);
-                    Token token = new Token(pattern.getTokenType(), value);
-                    tokens.add(token);
-                    pos += matcher.end();
-                    matchFound = true;
+                matcher = pattern.getPattern().matcher(text);
+                matcher.region(pos, text.length());
+                if (matcher.lookingAt()) {
+                    String matchedText = matcher.group();
+                    if (pattern.getTokenType() != null) {
+                        Token token = new Token(pattern.getTokenType(), matchedText);
+                        tokens.add(token);
+                    }
+                    pos = matcher.end();
                     break;
                 }
             }
-            if (!matchFound) {
-                throw new Exception("Invalid token at position " + pos);
+            if (matcher != null && !matcher.lookingAt()) {
+                throw new Exception("Unexpected character at position: " + matcher.start());
             }
         }
+        tokens.add(new Token(null, ""));
         return tokens;
     }
+
 
 }
 

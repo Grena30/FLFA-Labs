@@ -130,7 +130,7 @@ public class Main {
 
         // Laboratory work nr.3
 
-        String text = "22 + 2";
+        String text = "22 + 3 * 51 * (2 + 3)";
         Lexer lexer = new Lexer(text);
         List<Token> tokens = lexer.lex();
         System.out.println(tokens);
