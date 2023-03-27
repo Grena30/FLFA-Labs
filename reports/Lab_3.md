@@ -1,4 +1,4 @@
-#  Lexer
+#  Lexer & Scanner
 
 ## Course: Formal Languages & Finite Automata
 ## Author: Gutu Dinu
