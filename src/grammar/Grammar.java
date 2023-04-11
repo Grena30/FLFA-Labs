@@ -163,5 +163,141 @@ public class Grammar {
         return true;
     }
 
+    public void grammar_info(String additional){
+
+        System.out.println();
+        if (additional.length() != 0) {
+            System.out.println(additional);
+        }
+        System.out.println("Starting symbol: " + startSymbol);
+        System.out.println("Terminals: " + terminals);
+        System.out.println("Non-terminals: " + nonTerminals);
+        System.out.println("Production rules: " + productionRules);
+    }
+
+    public void convertToChomskyNormalForm() {
+        eliminateEpsilonProductions();
+        grammar_info("After removing null symbols");
+        eliminateUnitProductions();
+        grammar_info("After removing unit productions");
+        //removeInaccessibleSymbols();
+        //removeNonproductiveSymbols();
+    }
+
+    private void eliminateEpsilonProductions() {
+        // Step 1: Eliminate epsilon productions
+        Set<String> nullableSymbols = new HashSet<>();
+
+        // Find nullable symbols
+        for (String nonTerminal : nonTerminals) {
+            if (productionRules.get(nonTerminal).contains("")) {
+                nullableSymbols.add(nonTerminal);
+            }
+        }
+
+        // Remove epsilon productions
+        for (String nonTerminal : nonTerminals) {
+            List<String> productions = new ArrayList<>(productionRules.get(nonTerminal));
+            for (String production : productions) {
+                if (production.isEmpty()) {
+                    // Remove epsilon production
+                    productionRules.get(nonTerminal).remove("");
+                } else {
+                    // Remove nullable symbols from production
+                    for (int i = 0; i < production.length(); i++) {
+                        if (nullableSymbols.contains(String.valueOf(production.charAt(i)))) {
+                            String newProduction = production.substring(0, i) + production.substring(i + 1);
+                            if (!newProduction.isEmpty() && !productionRules.get(nonTerminal).contains(newProduction)) {
+                                productionRules.get(nonTerminal).add(newProduction);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        grammar_info("After removing epsilon productions");
+
+
+        // Remove non-terminal symbols that have no productions
+        for (String nonTerminal_null: nullableSymbols) {
+            List<String> productions_nullable = new ArrayList<>(productionRules.get(nonTerminal_null));
+
+            // Check if there are no productions in this non-terminal form the null-list
+            if (productions_nullable.isEmpty()){
+
+                // Remove the non-terminal and all of its other usages from the production rules and non-terminal symbols
+                productionRules.remove(nonTerminal_null);
+                nonTerminals.remove(nonTerminal_null);
+
+                // Iterate through all the non-terminals and remove the productions that contain the null-term
+                for (String nonTerminal: nonTerminals) {
+                    List<String> productions = new ArrayList<>(productionRules.get(nonTerminal));
+                    for (String production: productions){
+                        if (production.contains(nonTerminal_null)){
+                            productionRules.get(nonTerminal).remove(production);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void eliminateUnitProductions() {
+        // Step 2: Eliminate unit productions
+        Map<String, Set<String>> unitProductions = new HashMap<>();
+
+        // Find unit productions
+        for (String nonTerminal : nonTerminals) {
+            Set<String> unitNonTerminals = new HashSet<>();
+            for (String production : productionRules.get(nonTerminal)) {
+                if (production.length() == 1 && nonTerminals.contains(production)) {
+                    unitNonTerminals.add(production);
+                }
+            }
+            unitProductions.put(nonTerminal, unitNonTerminals);
+
+        }
+
+        // Remove unit productions
+        for (String nonTerminal : nonTerminals) {
+            List<String> productions = new ArrayList<>(productionRules.get(nonTerminal));
+            for (String production : productions) {
+                if (unitProductions.containsKey(production)) {
+                    for (String unitNonTerminal : unitProductions.get(production)) {
+                        if (!productionRules.get(nonTerminal).contains(unitNonTerminal)) {
+                            productionRules.get(nonTerminal).add(unitNonTerminal);
+                        }
+                    }
+                }
+            }
+            productionRules.get(nonTerminal).removeAll(unitProductions.get(nonTerminal));
+        }
+
+
+        // Add the production rules of the unit productions
+            for (String nonTerminal : nonTerminals) {
+                Set<String> unitNonTerminals = unitProductions.get(nonTerminal);
+                if (!unitNonTerminals.isEmpty()) {
+                    for (String unit : unitNonTerminals) {
+                        if (unitProductions.get(unit).isEmpty()) {
+                            for (String production: productionRules.get(unit)) {
+                                productionRules.get(nonTerminal).add(production);
+                            }
+                            unitProductions.remove(nonTerminal, unit);
+                        }
+                    }
+                }
+                if (unitProductions.get(nonTerminal).isEmpty()){
+                    //check++;
+                }
+            }
+        }
+
+    private void removeInaccessibleSymbols() {
+
+    }
+
 
 }

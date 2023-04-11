@@ -10,27 +10,56 @@ import java.util.regex.Matcher;
 
 import static lexer.TokenList.TOKEN_PATTERNS;
 
+
+/*
+    Varian 19
+    1. Eliminate epsilon productions
+    2. Eliminate any unit productions
+    3. Eliminate inaccessible symbols
+    4. Eliminate non-productive symbols
+    5. Obtain CNF
+    G = {Vn, Vt, P, S}
+    Vn = {S, A, B, C, E}
+    Vt = {a, d}
+    P = {S -> dB
+    S -> B
+    A -> d
+    A -> dS
+    A -> aAdCB
+    B -> aC
+    B -> dA
+    B -> AC
+    C -> epsilon
+    E -> AS}
+
+ */
+
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String text1 = "if (num >= 23.1 * 15): num = 23.1 * 15; else: num = num * 2;";
-        Lexer lexer1 = new Lexer(text1);
-        List<Token> tokens1 = lexer1.lex();
-        System.out.println("Input 1: " +  text1 + ". Tokenized form: " + tokens1);
+        String startingCharacter = "S";
+        Set<String> nonTerminals = new HashSet<>(Set.of("S", "A", "B", "C", "E"));
+        Set<String> terminals = new HashSet<>(Set.of("a", "d"));
+        Map<String, List<String>> productionRules = new HashMap<>() {{
+            put("S", new ArrayList<>(List.of("dB", "B")));
+            put("A", new ArrayList<>(List.of("d","dS", "aAdCB")));
+            put("B", new ArrayList<>(List.of("aC", "dA", "AC")));
+            put("C", new ArrayList<>(List.of("")));
+            put("E", new ArrayList<>(List.of("AS")));
+        }};
 
-        String text2 = "count = 0; coef_1 = 1.25;";
-        Lexer lexer2 = new Lexer(text2);
-        List<Token> tokens2 = lexer2.lex();
-        System.out.println("Input 2: " +  text2 + ". Tokenized form: " + tokens2);
+        Grammar g = new Grammar(startingCharacter, terminals, nonTerminals, productionRules);
+        System.out.println();
+        System.out.println("Starting symbol: " + g.getStartSymbol());
+        System.out.println("Terminals: " + g.getTerminals());
+        System.out.println("Non-terminals: " + g.getNonTerminals());
+        System.out.println("Production rules: " + g.getProductionRules());
 
-        String text3 = "while ( i <= 10): i = i - 1; prod = prod * 3/2; ";
-        Lexer lexer3 = new Lexer(text3);
-        List<Token> tokens3 = lexer3.lex();
-        System.out.println("Input 3: " +  text3 + ". Tokenized form: " +tokens3);
-
-        String text4 = "for (i = 0; i <= 15; i = i + 1): decimal = decimal * 3;";
-        Lexer lexer4 = new Lexer(text4);
-        List<Token> tokens4 = lexer4.lex();
-        System.out.println("Input 4: " +  text4 + ". Tokenized form: " +tokens4);
+        g.convertToChomskyNormalForm();
+        System.out.println();
+        System.out.println("Starting symbol: " + g.getStartSymbol());
+        System.out.println("Terminals: " + g.getTerminals());
+        System.out.println("Non-terminals: " + g.getNonTerminals());
+        System.out.println("Production rules: " + g.getProductionRules());
     }
 }
