@@ -180,7 +180,8 @@ public class Grammar {
         grammar_info("After removing null symbols");
         eliminateUnitProductions();
         grammar_info("After removing unit productions");
-        //removeInaccessibleSymbols();
+        removeInaccessibleSymbols();
+        grammar_info("After removing inaccessible symbols");
         //removeNonproductiveSymbols();
     }
 
@@ -226,11 +227,11 @@ public class Grammar {
             // Check if there are no productions in this non-terminal form the null-list
             if (productions_nullable.isEmpty()){
 
-                // Remove the non-terminal and all of its other usages from the production rules and non-terminal symbols
+                // Remove the non-terminal and all of its other usages from production rules and non-terminal symbols
                 productionRules.remove(nonTerminal_null);
                 nonTerminals.remove(nonTerminal_null);
 
-                // Iterate through all the non-terminals and remove the productions that contain the null-term
+                // Iterate through all the non-terminals and remove productions that contain the null-term
                 for (String nonTerminal: nonTerminals) {
                     List<String> productions = new ArrayList<>(productionRules.get(nonTerminal));
                     for (String production: productions){
@@ -245,7 +246,7 @@ public class Grammar {
 
 
     private void eliminateUnitProductions() {
-        // Step 2: Eliminate unit productions
+
         Map<String, Set<String>> unitProductions = new HashMap<>();
 
         // Find unit productions
@@ -260,23 +261,8 @@ public class Grammar {
 
         }
 
-        // Remove unit productions
-        for (String nonTerminal : nonTerminals) {
-            List<String> productions = new ArrayList<>(productionRules.get(nonTerminal));
-            for (String production : productions) {
-                if (unitProductions.containsKey(production)) {
-                    for (String unitNonTerminal : unitProductions.get(production)) {
-                        if (!productionRules.get(nonTerminal).contains(unitNonTerminal)) {
-                            productionRules.get(nonTerminal).add(unitNonTerminal);
-                        }
-                    }
-                }
-            }
-            productionRules.get(nonTerminal).removeAll(unitProductions.get(nonTerminal));
-        }
-
-
-        // Add the production rules of the unit productions
+        // Add the production rules of unit productions
+        // And the remove unit productions
             for (String nonTerminal : nonTerminals) {
                 Set<String> unitNonTerminals = unitProductions.get(nonTerminal);
                 if (!unitNonTerminals.isEmpty()) {
@@ -285,19 +271,49 @@ public class Grammar {
                             for (String production: productionRules.get(unit)) {
                                 productionRules.get(nonTerminal).add(production);
                             }
-                            unitProductions.remove(nonTerminal, unit);
-                        }
+                            productionRules.get(nonTerminal).remove(unit);
+                            unitProductions.get(nonTerminal).remove(unit);
+                        } // TODO for intertwined cases
                     }
                 }
-                if (unitProductions.get(nonTerminal).isEmpty()){
-                    //check++;
+            }
+        }
+    private void removeInaccessibleSymbols() {
+
+        ArrayList <String> accessibleSymbols = new ArrayList<>();
+
+        for (String nonTerminal: nonTerminals ){
+            String current = nonTerminal;
+            for (String nonTerminal2: nonTerminals){
+                String check = nonTerminal2;
+
+                if (accessibleSymbols.contains(current)){
+                    break;
+                }
+
+                if (Objects.equals(current, check)){
+                    continue;
+                }
+                for (String production: productionRules.get(check)){
+                    if (production.contains(current) && !accessibleSymbols.contains(current)){
+                        accessibleSymbols.add(current);
+                    } else {
+                        break;
+                    }
                 }
             }
         }
 
-    private void removeInaccessibleSymbols() {
-
+        for (String nonTerminal: nonTerminals){
+            if (!accessibleSymbols.contains(nonTerminal)){
+                productionRules.remove(nonTerminal);
+                nonTerminals.remove(nonTerminal);
+            }
+        }
     }
 
+    private void removeNonproductiveSymbols(){
+
+    }
 
 }

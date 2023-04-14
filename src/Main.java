@@ -56,10 +56,5 @@ public class Main {
         System.out.println("Production rules: " + g.getProductionRules());
 
         g.convertToChomskyNormalForm();
-        System.out.println();
-        System.out.println("Starting symbol: " + g.getStartSymbol());
-        System.out.println("Terminals: " + g.getTerminals());
-        System.out.println("Non-terminals: " + g.getNonTerminals());
-        System.out.println("Production rules: " + g.getProductionRules());
     }
 }
