@@ -20,6 +20,18 @@ public class Grammar {
         this.productionRules = productionRules;
     }
 
+    public static Grammar baseGrammar(){
+        return new Grammar(
+                "S",
+                new HashSet<>(Set.of("a", "b")),
+                new HashSet<>(Set.of("S", "A", "B")),
+                new HashMap<>() {{ put("S", new ArrayList<>(List.of("aA", "bB")));
+                    put("A", new ArrayList<>(List.of("bS", "aB")));
+                    put("B", new ArrayList<>(List.of("bA", "a")));}}
+
+        );
+    }
+
     public Map<String, List<String>> getProductionRules() {
         return productionRules;
     }
@@ -182,19 +194,19 @@ public class Grammar {
     public void convertToChomskyNormalForm() {
 
         eliminateEpsilonProductions();
-        grammar_info("After removing null symbols");
+        grammar_info("After removing null symbols".toUpperCase());
 
         eliminateUnitProductions();
-        grammar_info("After removing unit productions");
+        grammar_info("After removing unit productions".toUpperCase());
 
         removeNonproductiveSymbols();
-        grammar_info("After removing non-productive symbols");
+        grammar_info("After removing non-productive symbols".toUpperCase());
 
         removeInaccessibleSymbols();
-        grammar_info("After removing inaccessible symbols");
+        grammar_info("After removing inaccessible symbols".toUpperCase());
 
         grammarToChomskyNormalForm();
-        grammar_info("After Chomsky Normal Form conversion");
+        grammar_info("After Chomsky Normal Form conversion".toUpperCase());
     }
 
     private void eliminateEpsilonProductions() {
@@ -229,7 +241,7 @@ public class Grammar {
             }
         }
 
-        grammar_info("After removing epsilon productions");
+        grammar_info("After removing epsilon productions".toUpperCase());
 
 
         // Remove non-terminal symbols that have no productions

@@ -42,18 +42,19 @@ public class Main {
         Set<String> terminals = new HashSet<>(Set.of("a", "d"));
         Map<String, List<String>> productionRules = new HashMap<>() {{
             put("S", new ArrayList<>(List.of("dB", "B")));
-            put("A", new ArrayList<>(List.of("dS", "aAdCB")));
+            put("A", new ArrayList<>(List.of("d", "dS", "aAdCB")));
             put("B", new ArrayList<>(List.of("aC", "dA", "AC")));
             put("C", new ArrayList<>(List.of("")));
             put("E", new ArrayList<>(List.of("AS")));
         }};
 
         Grammar g = new Grammar(startingCharacter, terminals, nonTerminals, productionRules);
-        System.out.println();
+        System.out.println("Initial Form".toUpperCase());
         System.out.println("Starting symbol: " + g.getStartSymbol());
         System.out.println("Terminals: " + g.getTerminals());
         System.out.println("Non-terminals: " + g.getNonTerminals());
         System.out.println("Production rules: " + g.getProductionRules());
+
 
         g.convertToChomskyNormalForm();
     }

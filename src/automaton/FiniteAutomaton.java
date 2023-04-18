@@ -18,6 +18,30 @@ public class FiniteAutomaton {
         this.acceptStates = new HashSet<>();
     }
 
+    public FiniteAutomaton(Set<String> states, Set<String> alphabet, Transition[] transitions, String startState, Set<String> acceptStates) {
+        this.states = states;
+        this.alphabet = alphabet;
+        this.transitions = transitions;
+        this.startState = startState;
+        this.acceptStates = acceptStates;
+    }
+
+    public static FiniteAutomaton baseFiniteAutomaton(){
+        return new FiniteAutomaton(
+                new HashSet(Set.of("q0", "q1", "q2")),
+                new HashSet(Set.of("a", "b")),
+                new Transition[]{
+                        new Transition("q0", "q1", "a"),
+                        new Transition("q1", "q2", "b"),
+                        new Transition("q0", "q2", "b"),
+                        new Transition("q1", "q1", "a"),
+                        new Transition("q0", "q2", "a"),
+                },
+                "q0",
+                new HashSet<>(Set.of("q2"))
+        );
+    }
+
     public Set<String> getStates() {
         return states;
     }
@@ -105,9 +129,9 @@ public class FiniteAutomaton {
         }
         for (String state: this.acceptStates){
             if (productionRules.containsKey(state)) {
-                productionRules.get(state).add("e");
+                productionRules.get(state).add("ε");
             } else {
-                productionRules.put(state, new ArrayList<>(List.of("e")));
+                productionRules.put(state, new ArrayList<>(List.of("ε")));
             }
         }
         return new Grammar(startSymbol, terminals, nonTerminals, productionRules);
