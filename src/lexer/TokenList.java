@@ -18,6 +18,7 @@ public class TokenList {
             new TokenPattern("\\d+\\.\\d+", "FLOAT"),
             new TokenPattern("\\d+", "INTEGER"),
             new TokenPattern("if", "IF"),
+            new TokenPattern("print", "PRINT"),
             new TokenPattern("else", "ELSE"),
             new TokenPattern("while", "WHILE"),
             new TokenPattern("for", "FOR"),

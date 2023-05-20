@@ -3,7 +3,7 @@ package lexer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-
+import parser.Parser;
 import static lexer.TokenList.TOKEN_PATTERNS;
 
 public class Lexer {
@@ -12,6 +12,14 @@ public class Lexer {
 
     public Lexer(String text) {
         this.text = text;
+    }
+
+    public void lexAndParse() throws Exception {
+        List<Token> tokens = lex();
+        tokens.removeIf(token -> token.getTokenType() == null); // Remove tokens with null types
+        Parser parser = new Parser(tokens);
+        parser.parse();
+        parser.displayAST();
     }
 
     public List<Token> lex() throws Exception {
