@@ -251,6 +251,16 @@ abstract syntax. It focused on the logical relationships between different eleme
 of the code, allowing for high-level analysis and manipulation. ASTs are invaluable in various 
 stages of program analysis, such as type checking, optimization, code generation, and refactoring.
 
+Through these assignments, I have developed my programming skills and my understanding of these 
+fundamental ideas while gaining practical experience dealing with parsing and ASTs. 
+In addition to achieving my initial goals, I have also expanded my skill set for 
+processing and evaluating textual data.
+
+Last but not least it has given me insightful knowledge of ASTs, parsing, and their practical uses. 
+I now possess the knowledge and abilities necessary to handle increasingly challenging parsing 
+tasks and investigate potential future developments in this area. 
+I can without a doubt say that working on this project has improved my development as a student.
+
 Ultimately, the ability to program a parser and AST empowers developers and 
 language designers to create powerful tools, such as compilers, interpreters, 
 static analyzers, and IDE features. These tools enhance the productivity, 
