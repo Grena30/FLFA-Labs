@@ -214,7 +214,8 @@ Abstract Syntax Tree:
 Assignment Statement {
    Identifier: y
    Integer: 5
-		
+}
+	
 Assignment Statement {
     Identifier: x
     Expression {
