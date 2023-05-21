@@ -14,14 +14,6 @@ public class Lexer {
         this.text = text;
     }
 
-    public void lexAndParse() throws Exception {
-        List<Token> tokens = lex();
-        tokens.removeIf(token -> token.getTokenType() == null); // Remove tokens with null types
-        Parser parser = new Parser(tokens);
-        parser.parse();
-        parser.displayAST();
-    }
-
     public List<Token> lex() throws Exception {
         List<Token> tokens = new ArrayList<Token>();
         int pos = 0;
